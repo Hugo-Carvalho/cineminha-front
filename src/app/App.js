@@ -7,12 +7,12 @@ import Controler from '../controler/Controler'
 
 function App() {
     const [session, setSession] = useState({
-        "time": "05/06/2022 22:57:00:0000",
-        "video": Object.assign(document.createElement('video'), {
-            src: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
-            crossOrigin: 'Anonymous'
-        })
+        "time": "06/06/2022 01:58:00:0000",
+        "src": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
+        "video": Object.assign(document.createElement('video'), { crossOrigin: 'Anonymous' })
     });
+    const [theStart] = useState("https://c.tenor.com/4Bq8WXsHd74AAAPo/movie-netflix.mp4");
+    const [theEnd] = useState("https://c.tenor.com/BIAJFt7rC9oAAAPo/thats-all.mp4");
     const [joinRoom, setJoinRoom] = useState(false);
     const [lightIntensity, setLightIntensity] = useState(0.5);
 
@@ -27,14 +27,26 @@ function App() {
         var milliseconds = fullDate.getMilliseconds();
         var currentDate = new Date(day + "/" + month + "/" + year + " " + hour + ":" + minute + ":" + seconds + ":" + milliseconds)
         if (new Date(session.time) <= currentDate) {
-            setLightIntensity(0.1);
-            var currentTime = (currentDate - new Date(session.time) / 1000);
-            if (currentTime > 0 && session.video.currentTime === 0) {
+            var currentTime = (currentDate - new Date(session.time)) / 1000;
+            if (currentTime >= 0 && (session.video.src === theStart || session.video.currentTime === 0) && session.video.src !== theEnd) {
+                setLightIntensity(0.1);
+                session.video.src = session.src;
+                session.video.loop = "false";
                 session.video.currentTime = currentTime;
                 session.video.play();
-            } else if (currentTime > session.video.duration) {
-                session.video.stop();
+            } else if (currentTime > session.video.duration && session.video.src !== theEnd) {
                 setLightIntensity(0.5);
+                if (session.video.currentTime === session.video.duration) {
+                    session.video.src = theEnd;
+                    session.video.loop = "true";
+                    session.video.play();
+                }
+            }
+        } else {
+            if (session.video.src !== theStart) {
+                session.video.src = theStart;
+                session.video.loop = "true";
+                session.video.play();
             }
         }
     }
