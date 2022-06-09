@@ -4,7 +4,7 @@ import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import Axios from 'axios';
 import './style/Home.css';
 
-function Home(props) {
+function Home() {
 
     const [dateSession, setDateSession] = useState();
     const [timeSession, setTimeSession] = useState();
@@ -14,7 +14,7 @@ function Home(props) {
 
     const handleDateSession = (event) => {
         var fullDate = new Date(event.target.value);
-        var day = fullDate.getDate();
+        var day = fullDate.getUTCDate();
         var month = fullDate.getMonth() + 1;
         var year = fullDate.getFullYear();
         setDateSession(day + "/" + month + "/" + year)
@@ -35,8 +35,7 @@ function Home(props) {
             "time": dateSession + " " + timeSession + ":00:0000",
             "src": linkSession
         }).then(session => {
-            console.log(session)
-            setLinkSessionCreated(window.location.href + "/" + session.data.body);
+            setLinkSessionCreated(window.location.href + session.data.body);
         }).catch(error => {
             console.log(error);
         }).finally(() => {

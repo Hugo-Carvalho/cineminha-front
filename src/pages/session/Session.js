@@ -1,18 +1,18 @@
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { Suspense, useState } from 'react';
+import { Button, Container } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import { Terrain, PoorRoom } from '../components';
+import { Terrain, PoorRoom } from '../../components';
 import { Canvas } from '@react-three/fiber';
 import { Sky } from '@react-three/drei';
 import { Physics } from '@react-three/cannon';
-import Controler from '../controlers/CameraControls'
+import Axios from 'axios';
+import Controler from '../../controlers/CameraControls';
+import './style/Session.css';
 
 function Session(props) {
     let { idtSession } = useParams();
-    const [session, setSession] = useState({
-        "time": "09/06/2022 13:43:00:0000",
-        "src": "https://dicasbrasil.art.br/vapovapo/Homem-Aranha.Sem.Volta.Para.Casa.MP4.DUB.BaixarSeriesMP4.Club.mp4",
-        "video": Object.assign(document.createElement('video'), { crossOrigin: 'Anonymous' })
-    });
+    const [session, setSession] = useState();
+    const [loading, setLoading] = useState(false);
     const [theStart] = useState("https://c.tenor.com/4Bq8WXsHd74AAAPo/movie-netflix.mp4");
     const [theEnd] = useState("https://c.tenor.com/BIAJFt7rC9oAAAPo/thats-all.mp4");
     const [joinRoom, setJoinRoom] = useState(false);
@@ -53,13 +53,35 @@ function Session(props) {
         }
     }
 
-    useEffect(() => {
-        console.log(idtSession)
-    }, [idtSession])
+    const joinSession = () => {
+        setLoading(true);
+        Axios.post('https://re9euy0dja.execute-api.us-east-1.amazonaws.com/default/cineminha', {
+            "action": "get",
+            "idt": idtSession
+        }).then(session => {
+            console.log(session.data)
+            setSession({...session.data,
+                "video": Object.assign(document.createElement('video'), { crossOrigin: 'Anonymous' })
+            });
+            setJoinRoom(true);
+        }).catch(error => {
+            console.log(error);
+        }).finally(() => {
+            setLoading(false);
+        });
+    }
 
     return (
         <>
-            {joinRoom ?
+            {!joinRoom ?
+                <div className="session-page">
+                    <Container>
+                        <h1>Bem vindo ao Cineminha</h1>
+                        <h2>A sessão ira começar no horario estipulado, mas você pode aguardar na sala.</h2>
+                        <Button onClick={() => joinSession()} disabled={loading} variant="outline-light">Entrar na sessão</Button>
+                    </Container>
+                </div>
+                :
                 <Canvas id="cineminha-container" shadows>
                     <Suspense fallback={<></>}>
                         <Controler beginSession={beginSession} />
@@ -97,10 +119,6 @@ function Session(props) {
                         </Physics>
                     </Suspense>
                 </Canvas>
-                :
-                <button onClick={() => {
-                    setJoinRoom(true)
-                }}></button>
             }
         </>
     );

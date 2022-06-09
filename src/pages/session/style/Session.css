@@ -1,0 +1,44 @@
+.session-page {
+    height: 100%;
+    position: relative;
+}
+
+.session-page::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(backgroud.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.session-page .container {
+    position: relative;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.session-page h1 {
+    text-align: center;
+}
+
+.session-page h2 {
+    text-align: center;
+    font-size: 15px;
+    margin: 20px 0 50px 0;
+}
+
+.session-page label {
+    margin-top: 10px;
+}
+
+.session-page button {
+    width: 100%;
+    margin-top: 30px;
+}
