@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 
-function Controler(props) {
+function CameraControls(props) {
 
     const orbitControlsRef = useRef(null);
 
@@ -28,4 +28,4 @@ function Controler(props) {
     );
 }
 
-export default Controler;
+export default CameraControls;
