@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
-import model from './model.glb?url';
+import model from './model.glb?raw';
 
 export default function Cinema({ ...props }) {
   const group = useRef()
