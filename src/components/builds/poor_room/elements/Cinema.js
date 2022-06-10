@@ -1,10 +1,9 @@
 import React, { useRef } from 'react'
-import { useGLTF } from '@react-three/drei'
-import model from './model.glb?raw';
+import { useGLTF } from '@react-three/drei';
 
 export default function Cinema({ ...props }) {
   const group = useRef()
-  const { nodes, materials } = useGLTF(model)
+  const { nodes, materials } = useGLTF('/poor_room.glb')
   return (
     <group ref={group} {...props} dispose={null}>
       <mesh geometry={nodes.Plane064.geometry} material={materials['Material.065']} position={[-14.13, 44.34, -2.92]} scale={[46.47, 31.95, 30.2]} />
@@ -202,4 +201,4 @@ export default function Cinema({ ...props }) {
   )
 }
 
-useGLTF.preload(model)
+useGLTF.preload('/poor_room.glb')
