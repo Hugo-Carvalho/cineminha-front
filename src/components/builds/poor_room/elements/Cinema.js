@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
-import model from './model.glb';
+import model from 'https://cineminha.s3.amazonaws.com/models/poor_room.glb';
 
 export default function Cinema({ ...props }) {
   const group = useRef()
