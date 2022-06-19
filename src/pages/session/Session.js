@@ -13,7 +13,8 @@ function Session(props) {
     let { idtSession } = useParams();
     const [session, setSession] = useState();
     const [loading, setLoading] = useState(false);
-    const [theStart] = useState("https://c.tenor.com/4Bq8WXsHd74AAAPo/movie-netflix.mp4");
+    const [theStart] = useState("https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8");
+    const [theMovie, setTheMovie] = useState("");
     const [theEnd] = useState("https://c.tenor.com/BIAJFt7rC9oAAAPo/thats-all.mp4");
     const [joinRoom, setJoinRoom] = useState(false);
     const [lightIntensity, setLightIntensity] = useState(0.5);
@@ -26,8 +27,7 @@ function Session(props) {
         var hour = fullDate.getHours();
         var minute = fullDate.getMinutes();
         var seconds = fullDate.getSeconds();
-        var milliseconds = fullDate.getMilliseconds();
-        var currentDate = new Date(day + "/" + month + "/" + year + " " + hour + ":" + minute + ":" + seconds + ":" + milliseconds)
+        var currentDate = new Date(year + "-" + month + "-"+  day + " " + hour + ":" + minute + ":" + seconds)
         if (new Date(session.time) <= currentDate) {
             var currentTime = (currentDate - new Date(session.time)) / 1000;
             if (currentTime >= 0 && (session.video.src === theStart || session.video.currentTime === 0) && session.video.src !== theEnd) {
@@ -45,10 +45,14 @@ function Session(props) {
                 }
             }
         } else {
-            if (session.video.src !== theStart) {
-                session.video.src = theStart;
-                session.video.loop = "true";
-                session.video.play();
+            if (session.src !== theStart) {
+                var newSession = {...session};
+                newSession.src = theStart;
+                newSession.autoPlay = true;
+                newSession.controls = false;
+                newSession.width = "100%";
+                newSession.height = "auto";
+                setSession(newSession);
             }
         }
     }
@@ -59,10 +63,8 @@ function Session(props) {
             "action": "get",
             "idt": idtSession
         }).then(session => {
-            console.log(session.data)
-            setSession({...session.data,
-                "video": Object.assign(document.createElement('video'), { crossOrigin: 'Anonymous' })
-            });
+            setSession(session.data);
+            setTheMovie(session.data.src)
             setJoinRoom(true);
         }).catch(error => {
             console.log(error);

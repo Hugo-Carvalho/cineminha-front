@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Hls from 'hls.js';
-import * as THREE from 'three';
 
-export default function Screen(props) {
+function HlsPlayer(props) {
 
-    const [video] = useState(Object.assign(document.createElement('video')));
+    const playerRef = useRef(HTMLVideoElement);
 
     useEffect(() => {
         let hls = null;
+        console.log("hjsdkaskakjdakjsdhajkds")
 
         function _initPlayer() {
             if (hls != null) {
@@ -19,14 +19,17 @@ export default function Screen(props) {
                 ...props.hlsConfig,
             });
 
-            newHls.attachMedia(video);
+            if (playerRef.current != null) {
+                newHls.attachMedia(playerRef.current);
+            }
 
             newHls.on(Hls.Events.MEDIA_ATTACHED, () => {
                 newHls.loadSource(props.src);
 
                 newHls.on(Hls.Events.MANIFEST_PARSED, () => {
                     if (props.autoPlay) {
-                        video?.play()
+                        playerRef?.current
+                            ?.play()
                             .catch(() =>
                                 console.log(
                                     'Unable to autoplay prior to user interaction with the dom.'
@@ -65,16 +68,13 @@ export default function Screen(props) {
                 hls.destroy();
             }
         };
-    }, [props.autoPlay, props.hlsConfig, video, props.src]);
+    }, [props.autoPlay, props.hlsConfig, playerRef, props.src]);
 
-    return (
-        <group {...props}>
-            <mesh>
-                <planeBufferGeometry args={[53, 25]} />
-                <meshBasicMaterial toneMapped={false}>
-                    <videoTexture attach="map" color="gray" args={[video]} encoding={THREE.sRGBEncoding} />
-                </meshBasicMaterial>
-            </mesh>
-        </group>
-    )
+    // If Media Source is supported, use HLS.js to play video
+    if (Hls.isSupported()) return <video ref={playerRef} {...props} />;
+
+    // Fallback to using a regular video player if HLS is supported by default in the user's browser
+    return <video ref={playerRef} src={props.src} autoPlay={props.autoPlay} {...props} />;
 }
+
+export default HlsPlayer;

@@ -8,7 +8,7 @@ function Home() {
 
     const [dateSession, setDateSession] = useState();
     const [timeSession, setTimeSession] = useState();
-    const [linkSession, setLinkSession] = useState();
+    const [fileMovie, setFileMovie] = useState();
     const [loading, setLoading] = useState(false);
     const [linkSessionCreated, setLinkSessionCreated] = useState("");
 
@@ -17,23 +17,23 @@ function Home() {
         var day = fullDate.getUTCDate();
         var month = fullDate.getMonth() + 1;
         var year = fullDate.getFullYear();
-        setDateSession(day + "/" + month + "/" + year)
+        setDateSession(year + "-" + month + "-" + day)
     }
 
     const handleTimeSession = (event) => {
         setTimeSession(event.target.value);
     }
 
-    const handleLinkSession = (event) => {
-        setLinkSession(event.target.value);
+    const handleFileMovie = (event) => {
+        setFileMovie(event.target.value);
     }
 
     const createSession = () => {
         setLoading(true);
         Axios.post('https://re9euy0dja.execute-api.us-east-1.amazonaws.com/default/cineminha', {
             "action": "set",
-            "time": dateSession + " " + timeSession + ":00:0000",
-            "src": linkSession
+            "time": dateSession + " " + timeSession + ":00",
+            "src": fileMovie
         }).then(session => {
             setLinkSessionCreated(window.location.href + session.data.body);
         }).catch(error => {
@@ -65,7 +65,7 @@ function Home() {
                     </Row>
                     <Form.Group className="mb-12" controlId="linkSession">
                         <Form.Label>Link do filme</Form.Label>
-                        <Form.Control onChange={(e) => handleLinkSession(e)} type="text" placeholder="Link do filme" />
+                        <Form.Control onChange={(e) => handleFileMovie(e)} type="text" placeholder="Link do filme" />
                     </Form.Group>
                     <Button onClick={() => createSession()} disabled={loading} variant="outline-light">Criar sessão</Button>
                 </Form>
